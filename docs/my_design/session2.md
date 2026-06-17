@@ -17,9 +17,9 @@
 
 ```c
 // SDK本体の内部初期化
-void Initialize();
+CSDKError Initialize();
 // SDK本体の状態を開放
-void Release();
+CSDKError Release();
 
 // カメラデバイスの列挙
 // *camera_count: 検出したカメラ数を返す
@@ -39,7 +39,7 @@ CSDKError ReleaseEnumCameras(CameraDeviceInfo* cameras);
 //         CSDKError_DeviceError: カメラの接続確立に失敗した場合
 CSDKError ConnectCamera(/*in*/ const CameraDeviceInfo* camera_info,
                         /*in*/ ConnectCallback connectCallback,
-                        /*out*/ CameraHandle* camera_handle);
+                        /*in*/ void* user_context);
 // カメラデバイスへの切断
 // @brief カメラの接続を切断する。
 // @param camera_handle カメラデバイスのハンドル
@@ -56,7 +56,7 @@ CSDKError DisconnectCamera(/*in*/ CameraHandle camera_handle);
 //         CSDKError_InvalidArg: 引数が不正な場合
 //         CSDKError_DeviceError: カメラの設定取得に失敗した場合
 CSDKError GetCameraSetting(/*in*/ CameraHandle camera_handle,
-                          /*in/out*/ CProperty* property);
+                           /*in/out*/ CProperty* property);
 // カメラデバイス設定
 // @brief カメラの設定を設定する。
 // @param camera_handle カメラデバイスのハンドル
@@ -77,9 +77,16 @@ CSDKError SetCameraSetting(/*in*/ CameraHandle camera_handle,
 // @return CSDKError_Success: 成功
 //         CSDKError_InvalidArg: 引数が不正な場合
 //         CSDKError_DeviceError: カメラの操作に失敗した場合
-CSDKError SendOperationCode(/*in*/ CameraHandle camera_handle,
+CSDKError SendCommandCode(/*in*/ CameraHandle camera_handle,
                             /*in*/ CCommandCode command_code,
                             /*in*/ CCommandValueUnion* command_value);
+
+// ライブプレビュー開始
+CSDKError StartPreview(/*in*/ CameraHandle camera_handle,
+                         /*in*/ PreviewCallback previewCallback,
+                         /*in*/ void* user_context);
+// ライブプレビュー終了
+CSDKError StopPreview(/*in*/ CameraHandle camera_handle);
 ```
 
 ---
@@ -101,7 +108,7 @@ CSDKError SendOperationCode(/*in*/ CameraHandle camera_handle,
 * **引数**:
   * `in const CameraDeviceInfo* camera_info`: カメラデバイスの情報
   * `in ConnectCallback connectCallback`: カメラデバイスの接続完了あるいは失敗時に呼び出されるコールバック関数ポインタ
-  * `out CameraHandle* camera_handle`: カメラデバイスのハンドル
+  * `in void* user_context`: ユーザーコンテキスト
 * **戻り値**: `CSDKError`
 * **説明**: 指定された情報のカメラとの接続を確立し、制御ハンドルを生成します。
 
@@ -136,6 +143,7 @@ CSDKError SendOperationCode(/*in*/ CameraHandle camera_handle,
 * **引数**:
   * `in CameraHandle camera_handle`: カメラデバイスのハンドル
   * `in PreviewCallback previewCallback`: カメラデバイスのプレビューコールバック関数ポインタ
+  * `in void* user_context`: ユーザーコンテキスト
 * **戻り値**: `CSDKError`
 * **説明**: 指定されたカメラデバイスのライブプレビューを開始します。
 
@@ -162,6 +170,7 @@ CSDKError SendOperationCode(/*in*/ CameraHandle camera_handle,
 * 引数:
   * `CSDKError error`: コールバックを呼び出した原因
   * `CameraHandle camera_handle`: カメラデバイスのハンドル
+  * `void* user_context`: ユーザーコンテキスト
 
 ### 3.3 `CameraHandle` (型)
 * カメラデバイスの識別に使用するハンドル
@@ -175,10 +184,8 @@ CSDKError SendOperationCode(/*in*/ CameraHandle camera_handle,
   * SDK内で設定値のサイズを管理することで、メモリの確保の必要性をなくす
 
 ### 3.5 `CameraDeviceInfo` (構造体)
-* シリアル番号 (`char*`)
-* シリアル番号サイズ (`size_t`) 
-* モデル名 (`char*`)
-* モデル名サイズ (`size_t`)
+* シリアル番号 (`char[64]`)
+* モデル名 (`char[128]`)
 * 接続インターフェース (`InterfaceType` : USB, Ether, etc.)
   * `INTERFACE_TYPE_USB`
   * `INTERFACE_TYPE_ETHER`
@@ -196,6 +203,7 @@ CSDKError SendOperationCode(/*in*/ CameraHandle camera_handle,
 * 引数:
   * `CameraHandle camera_handle`: カメラデバイスのハンドル
   * `CLivePreviewData* live_preview_data`: ライブプレビューデータ
+  * `void* user_context`: ユーザーコンテキスト
 
 ### 3.9 `CLivePreviewData` (構造体)
 * ライブプレビューデータ
