@@ -77,8 +77,13 @@ sequenceDiagram
 
 ### 2.1 SDK/カメラ接続状態の定義
 【どのような状態が存在するか、一覧を記述します。】
-- **状態A**: 説明
-- **状態B**: 説明
+- **Uninitialized**: SDK初期化前
+- **Initialized**: SDK初期化後、カメラ未接続
+- **Connecting**: カメラ接続中
+- **Connected**: カメラ接続完了
+- **Reconnecting**: カメラ接続切断後の再接続中
+- **Reconnected**: カメラの再接続完了
+- **Disconnected**: カメラの切断完了
 
 ### 2.2 状態遷移図
 【Mermaid等の記述を用いて、どのイベント（API呼び出しやハードウェア割り込み）によってどの状態へ遷移するかを定義してください。】
@@ -86,7 +91,16 @@ sequenceDiagram
 ```mermaid
 %% 【ここに状態遷移図を記述してください】
 stateDiagram-v2
-    %% [*] --> 状態A
+    [*] --> Uninitialized
+    Uninitialized --> Initialized : InitSDK()
+    Initialized --> Connecting : ConnectCamera(handle)
+    Connecting --> Connected : ConnectCallback(CSDKError_Success, handle, context)
+    Connected --> Disconnected : DisconnectCamera(handle)
+    Disconnected --> Initialized : Disconnect()
+    Disconnected --> Reconnecting : ConnectCamera(handle)
+    Reconnecting --> Reconnected : ConnectCallback(CSDKError_Success, handle, context)
+    Connected --> Reconnecting : カメラ切断
+    Reconnecting --> Disconnected : カメラ切断
 ```
 
 ---
