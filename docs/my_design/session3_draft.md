@@ -17,22 +17,56 @@
 sequenceDiagram
     actor App as アプリ
     participant SDK as SDK
+    participant Cam as カメラ
     App->>SDK: ConnectCamera(...)
-    %% SDK-->>App: ...
+    SDK->>SDK: カメラ用クラスのインスタンス生成
+    SDK-->>App: CSDKError_Success (受付が成功したことを返す)
+    SDK->>Cam: カメラにPTP通信開始要求
+    Cam->>SDK: カメラ初期化完了通知
+    SDK->>SDK: handle <- カメラ用クラスのインスタンスのアドレス値
+    SDK->>App: ConnectCallback(CSDKError_Success, handle, context)
 ```
 
 ### 1.2 ライブプレビュー開始〜画像取得〜終了シーケンス（正常系）
 【`StartPreview` の呼び出し、コールバックでの複数回の画像受信、そして `StopPreview` による終了までの流れを記述してください。】
 
 ```mermaid
-%% 【ここにプレビューのシーケンス図を記述してください】
+sequenceDiagram
+  actor App as アプリ
+  participant SDK as SDK
+  participant Cam as カメラ
+  App->>SDK: StartPreview(handle)
+  SDK->>SDK: カメラインスタンスをプレビュー取得状態に変更
+  SDK-->>App: CSDKError_Success (受付が成功したことを返す)
+  loop プレビュー中
+    SDK->>Cam: プレビュー取得要求
+    Cam->>SDK: プレビューデータ
+    SDK->>App: PreviewImageCallback(imageData, frameType, timestamp)
+  end
+  App->>SDK: StopPreview(handle)
+  SDK->>SDK: カメラインスタンスのプレビュー取得状態を解除
+    
 ```
 
 ### 1.3 プレビュー中の突発的な切断シーケンス（異常系）
 【プレビュー中にカメラが物理的に抜けた（UC-07）場合、SDKがそれをどう検知し、アプリのコールバックやAPIを通じてどのようにエラー処理されるかを記述してください。】
 
 ```mermaid
-%% 【ここに異常系のシーケンス図を記述してください】
+sequenceDiagram
+  actor App as アプリ
+  participant SDK as SDK
+  participant Cam as カメラ
+  App->>SDK: StartPreview(handle)
+  SDK->>SDK: カメラインスタンスをプレビュー取得状態に変更
+  SDK-->>App: CSDKError_Success (受付が成功したことを返す)
+  loop プレビュー中
+    SDK->>Cam: プレビュー取得要求
+    Cam->>SDK: プレビューデータ
+    SDK->>App: PreviewImageCallback(imageData, frameType, timestamp)
+  end
+  Note over Cam: カメラの切断
+  SDK->>SDK: カメラデバイスの切断を判定
+  SDK->>App: EventCallback(CEventData{eventType=EVENT_TYPE_DEVICE_MISSING, eventParam=...}, handle, user_context)
 ```
 
 ---

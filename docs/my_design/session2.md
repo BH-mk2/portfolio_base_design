@@ -39,6 +39,7 @@ CSDKError ReleaseEnumCameras(CameraDeviceInfo* cameras);
 //         CSDKError_DeviceError: カメラの接続確立に失敗した場合
 CSDKError ConnectCamera(/*in*/ const CameraDeviceInfo* camera_info,
                         /*in*/ ConnectCallback connectCallback,
+                        /*in*/ EventCallback eventCallback,
                         /*in*/ void* user_context);
 // カメラデバイスへの切断
 // @brief カメラの接続を切断する。
@@ -108,6 +109,7 @@ CSDKError StopPreview(/*in*/ CameraHandle camera_handle);
 * **引数**:
   * `in const CameraDeviceInfo* camera_info`: カメラデバイスの情報
   * `in ConnectCallback connectCallback`: カメラデバイスの接続完了あるいは失敗時に呼び出されるコールバック関数ポインタ
+  * `in EventCallback eventCallback`: カメラデバイスのイベントコールバック関数ポインタ
   * `in void* user_context`: ユーザーコンテキスト
 * **戻り値**: `CSDKError`
 * **説明**: 指定された情報のカメラとの接続を確立し、制御ハンドルを生成します。
@@ -205,7 +207,23 @@ CSDKError StopPreview(/*in*/ CameraHandle camera_handle);
   * `CLivePreviewData* live_preview_data`: ライブプレビューデータ
   * `void* user_context`: ユーザーコンテキスト
 
-### 3.9 `CLivePreviewData` (構造体)
+### 3.9 `EventCallback` (関数ポインタ)
+* カメラデバイスのイベントを受け取るコールバック関数
+* 引数:
+  * `CameraHandle camera_handle`: カメラデバイスのハンドル
+  * `CEventData* event_data`: イベントデータ
+  * `void* user_context`: ユーザーコンテキスト
+
+### 3.10 `CEventData` (構造体)
+* カメラデバイスのイベントデータ
+* イベント種別 (`CEventType` : Enum)
+  * `EVENT_TYPE_DEVICE_MISSING`: カメラデバイスの通信エラーが発生
+  * `EVENT_TYPE_DEVICE_CONNECTED`: カメラデバイスの接続
+* イベントパラメータ (`CEventParam` : Union)
+  * イベント種別によって適切な値
+  * SDK内でイベントパラメータのサイズを管理することで、メモリの確保の必要性をなくす
+
+### 3.11 `CLivePreviewData` (構造体)
 * ライブプレビューデータ
 * 幅 (`uint32_t`)
 * 高さ (`uint32_t`)
