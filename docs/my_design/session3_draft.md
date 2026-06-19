@@ -96,11 +96,12 @@ stateDiagram-v2
     Initialized --> Connecting : ConnectCamera(handle)
     Connecting --> Connected : ConnectCallback(CSDKError_Success, handle, context)
     Connected --> Disconnected : DisconnectCamera(handle)
-    Disconnected --> Initialized : Disconnect()
-    Disconnected --> Reconnecting : ConnectCamera(handle)
+    Disconnected --> Initialized : 
     Reconnecting --> Reconnected : ConnectCallback(CSDKError_Success, handle, context)
-    Connected --> Reconnecting : カメラ切断
-    Reconnecting --> Disconnected : カメラ切断
+    Connected --> Reconnecting : カメラと通信エラー(一定時間待機後再接続を試みる)
+    Connected --> Disconnected : カメラと通信エラー(再接続設定がOFF)
+    Reconnecting --> Disconnected : タイムアウト
+    Reconnected --> Disconnected : DisconnectCamera(handle)
 ```
 
 ---
@@ -114,4 +115,11 @@ stateDiagram-v2
   * プレビュー中にエラーが発生した場合は、一度 `Disconnected`（初期状態）まで強制的に状態を引き戻し、アプリ側にリソースの再解放と再接続を要求するシンプルな遷移を採用した。これにより、SDK内部の複雑な再試行ロジックを排除し、堅牢性を高めた。
 
 - 【同期/非同期の設計判断理由について】
+  - ConnectCameraを非同期にしたのは処理に時間がかかり、アプリ側がフリーズしてしまう為。コールバックで通知するようにした。
+  - StartPreviewを非同期にしたのは画像の取得が連続的なもので一回の呼び出しではない為。
+  - DisconnectCameraは非同期でイベントを返すが、その理由は接続と同じで処理に時間がかかるかもしれない為。
 - 【状態遷移とエラーリカバリの設計判断理由について】
+  - カメラの操作とは別でInit/Releaseを設けたのは、カメラの操作に関連してスレッドプールの立ち上げといった関連リソースの確保/解放を行いたい為。将来的な関連リソースの増加にも対応が可能になる点もある。
+  - Connecting/Connectedで別の状態にしているのは、Connectedだけだと接続ができてない状態を適切に管理できない為。
+  - カメラは何かしらの接続(USB,Ether,Wifi)で接続されており、必ずしも接続が安定している訳ではない為、再接続が必要なのでReconnecting/Reconnectedを用意した。
+  - Connectedから直接Disconnectedにつながるのは、再接続シーケンスを設けずに通信エラーから再度接続するかどうかをアプリに委ねられるようにする為。
