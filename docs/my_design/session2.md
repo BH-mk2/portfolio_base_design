@@ -43,6 +43,7 @@ CSDKError ConnectCamera(/*in*/ const CameraDeviceInfo* camera_info,
                         /*in*/ void* user_context);
 // カメラデバイスへの切断
 // @brief カメラの接続を切断する。
+// 要求自体はすぐに返るが、関連する切断イベントはConnectCameraのEventCallbackから非同期に通知される。
 // @param camera_handle カメラデバイスのハンドル
 // @return CSDKError_Success: 成功
 //         CSDKError_InvalidArg: 引数が不正な場合
