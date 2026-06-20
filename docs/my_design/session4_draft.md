@@ -28,8 +28,9 @@
 ### 1.2 非同期エラーの通知方針
 【接続中やストリーミング中にバックグラウンドで発生したエラーを、アプリ側にどう通知するか記述してください。】
 
-- 例：`ConnectCamera` 内の非同期処理でエラーが発生した場合は、`ConnectCallback` の引数 `CSDKError` に詳細なエラーコードを格納して通知する。
-- 例：ライブプレビュー中の通信切断などの突発的なエラーは、`EventCallback` を通じて `EVENT_TYPE_DEVICE_MISSING` などのイベント種別と共にエラー情報を通知する。
+- `ConnectCamera` 内の非同期処理でエラーが発生した場合は、`ConnectCallback` の引数 `CSDKError` に詳細なエラーコードを格納して通知する。
+- ライブプレビュー中の通信切断などの突発的なエラーは、`EventCallback` を通じて `EVENT_TYPE_DEVICE_MISSING` などのイベント種別と共にエラー情報を通知する。
+- 物理的切断が発生した場合は、ConnectCallbackの引数で渡したEventCallbackを通じて、`EVENT_TYPE_DEVICE_MISSING` などのイベント種別と共にエラー情報を通知する。
 
 ---
 
@@ -46,16 +47,8 @@
 ### 2.2 ログ出力方式（リダイレクト方針）
 【ログの出力先をアプリ側でどう制御できるようにするか記述してください。】
 
-- SDK自体は直接ファイルや標準出力へログを出力せず、アプリが登録した「ログコールバック関数」を経由してログをリダイレクトする設計とする。
-- ログコールバックが登録されていない場合は、デフォルトで何も出力しない（またはデバッグビルド時のみ標準エラー出力に出力する）。
-
-```c
-// ログコールバックの関数ポインタ定義
-typedef void (*CSDKLogCallback)(CSDKLogLevel level, const char* message, void* user_context);
-
-// ログコールバックの登録API
-CSDKError SetLogCallback(CSDKLogCallback callback, void* user_context);
-```
+- ログはあくまでSDKのデバッグ用なので、アプリとは直接関係しない為アプリに渡すようなことはしない。
+- 各OSのデバッグ用ツールで確認できるような形で出力する。(WinだとDbgView、Linuxだとsyslogなど)
 
 ---
 
