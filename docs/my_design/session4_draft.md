@@ -11,17 +11,19 @@
 【SDKが定義するエラーコード（Enumなど）の一覧と、それぞれの意味を記述してください。】
 
 - **エラーコード一覧**:
-  - `CSDKError_Success` (0): 成功
-  - `CSDKError_InvalidArg` (1): 不正な引数
-  - `CSDKError_NotInitialized` (2): SDKが初期化されていない
-  - `CSDKError_AlreadyInitialized` (3): SDKが既に初期化されている
-  - `CSDKError_DeviceNotFound` (100): 対象のカメラが見つからない
-  - `CSDKError_ConnectionFailed` (101): カメラへの接続に失敗
-  - `CSDKError_CommunicationError` (102): 通信中のエラー
-  - `CSDKError_InvalidHandle` (103): 無効なカメラハンドル
-  - `CSDKError_NotSupported` (200): サポートされていない機能
-  - `CSDKError_OutOfMemory` (900): メモリ不足
-  - `CSDKError_Unexpected` (999): 予期せぬ内部エラー
+  - `CSDKError_Success` (0x0): 成功
+  - `CSDKError_General` (0x8000): 一般的なエラーカテゴリ
+  - `CSDKError_General_InvalidArg` (0x8001): 不正な引数
+  - `CSDKError_General_NotInitialized` (0x8002): SDKが初期化されていない
+  - `CSDKError_General_DeviceNotFound` (0x8003): 対象のカメラが見つからない
+  - `CSDKError_General_InvalidHandle` (0x8005): 無効なカメラハンドル
+  - `CSDKError_General_NotSupported` (0x8006): サポートされていない機能
+  - `CSDKError_Network` (0x8100): 通信系のエラーカテゴリ
+  - `CSDKError_Network_ConnectionFailed` (0x8101): カメラへの接続に失敗
+  - `CSDKError_Network_CommunicationError` (0x8102): 通信中のエラー
+  - `CSDKError_Process` (0x8200): SDK内部事情のエラーカテゴリ
+  - `CSDKError_Process_OutOfMemory` (0x8201): メモリ不足
+  - `CSDKError_Process_Unexpected` (0x8202): 予期せぬ内部エラー
 
 ### 1.2 非同期エラーの通知方針
 【接続中やストリーミング中にバックグラウンドで発生したエラーを、アプリ側にどう通知するか記述してください。】
