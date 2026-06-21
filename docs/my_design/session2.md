@@ -36,7 +36,7 @@ CSDKError ReleaseEnumCameras(CameraDeviceInfo* cameras);
 // @param camera_handle カメラデバイスのハンドル
 // @return CSDKError_Success: 成功
 //         CSDKError_InvalidArg: 引数が不正な場合
-//         CSDKError_DeviceError: カメラの接続確立に失敗した場合
+//         CSDKError_Network_DeviceError: カメラの接続確立に失敗した場合
 CSDKError ConnectCamera(/*in*/ const CameraDeviceInfo* camera_info,
                         /*in*/ ConnectCallback connectCallback,
                         /*in*/ EventCallback eventCallback,
@@ -47,7 +47,7 @@ CSDKError ConnectCamera(/*in*/ const CameraDeviceInfo* camera_info,
 // @param camera_handle カメラデバイスのハンドル
 // @return CSDKError_Success: 成功
 //         CSDKError_InvalidArg: 引数が不正な場合
-//         CSDKError_DeviceError: カメラの切断に失敗した場合
+//         CSDKError_Network_DeviceError: カメラの切断に失敗した場合
 CSDKError DisconnectCamera(/*in*/ CameraHandle camera_handle);
 
 // カメラデバイス設定
@@ -56,7 +56,7 @@ CSDKError DisconnectCamera(/*in*/ CameraHandle camera_handle);
 // @param property 設定値の構造体
 // @return CSDKError_Success: 成功
 //         CSDKError_InvalidArg: 引数が不正な場合
-//         CSDKError_DeviceError: カメラの設定取得に失敗した場合
+//         CSDKError_Network_DeviceError: カメラの設定取得に失敗した場合
 CSDKError GetCameraSetting(/*in*/ CameraHandle camera_handle,
                            /*in/out*/ CProperty* property);
 // カメラデバイス設定
@@ -66,7 +66,7 @@ CSDKError GetCameraSetting(/*in*/ CameraHandle camera_handle,
 // @param property 設定値の構造体
 // @return CSDKError_Success: 成功
 //         CSDKError_InvalidArg: 引数が不正な場合
-//         CSDKError_DeviceError: カメラの設定設定に失敗した場合
+//         CSDKError_Network_DeviceError: カメラの設定設定に失敗した場合
 CSDKError SetCameraSetting(/*in*/ CameraHandle camera_handle,
                             /*in*/ size_t property_count,
                             /*in*/ const CProperty* property);
@@ -78,7 +78,7 @@ CSDKError SetCameraSetting(/*in*/ CameraHandle camera_handle,
 // @param command_value 操作値
 // @return CSDKError_Success: 成功
 //         CSDKError_InvalidArg: 引数が不正な場合
-//         CSDKError_DeviceError: カメラの操作に失敗した場合
+//         CSDKError_Network_DeviceError: カメラの操作に失敗した場合
 CSDKError SendCommandCode(/*in*/ CameraHandle camera_handle,
                             /*in*/ CCommandCode command_code,
                             /*in*/ CCommandValueUnion* command_value);
@@ -166,7 +166,7 @@ CSDKError StopPreview(/*in*/ CameraHandle camera_handle);
 ### 3.1 `CSDKError` (Enum)
 * **CSDKError_Success**: 成功
 * **CSDKError_InvalidArg**: 引数が不正な場合
-* **CSDKError_DeviceError**: デバイスエラー
+* **CSDKError_Network_DeviceError**: デバイスエラー
 
 ### 3.2 `ConnectCallback` (関数ポインタ)
 * デバイスの接続完了あるいは失敗時に呼び出される関数
