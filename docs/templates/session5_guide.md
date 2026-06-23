@@ -22,10 +22,10 @@ graph TD
     App_Buf["アプリ側バッファ (ゼロコピー)"]
     App_Proc["アプリ処理 (描画・AI解析)"]
 
-    Cam -->|1. 画像キャプチャ| USB
-    USB -->|2. パケット受信| SDK_Buf
-    SDK_Buf -->|3. コピー処理 (遅延 & CPU負荷の原因)| App_Buf
-    App_Buf -->|4. コールバック通知| App_Proc
+    Cam -->|"1. 画像キャプチャ"| USB
+    USB -->|"2. パケット受信"| SDK_Buf
+    SDK_Buf -->|"3. コピー処理 (遅延 ＆ CPU負荷の原因)"| App_Buf
+    App_Buf -->|"4. コールバック通知"| App_Proc
 
     note_issue["【遅延とCPU負荷のボトルネック】<br/>・高頻度なメモリ割り当て (malloc/new) <br/>・スレッド間のデータコピーオーバーヘッド<br/>・スレッドのコンテキストスイッチ切り替え"]
     SDK_Buf -.-> note_issue
